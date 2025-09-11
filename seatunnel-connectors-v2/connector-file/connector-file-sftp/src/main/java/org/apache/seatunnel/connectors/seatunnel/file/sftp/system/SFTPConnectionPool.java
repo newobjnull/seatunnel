@@ -28,6 +28,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -115,7 +116,13 @@ public class SFTPConnectionPool {
         this.maxConnection = maxConn;
     }
 
-    public ChannelSftp connect(String host, int port, String user, String password, String keyFile)
+    public ChannelSftp connect(
+            String host,
+            int port,
+            String user,
+            String password,
+            String identityFileContent,
+            String identityFilePass)
             throws IOException {
         // get connection from pool
         ConnectionInfo info = new ConnectionInfo(host, port, user);
@@ -141,12 +148,17 @@ public class SFTPConnectionPool {
                 user = System.getProperty("user.name");
             }
 
-            if (password == null) {
-                password = "";
-            }
-
-            if (keyFile != null && keyFile.length() > 0) {
-                jsch.addIdentity(keyFile);
+            if (identityFileContent != null && identityFileContent.length() > 0) {
+                if (identityFilePass != null && identityFilePass.length() > 0) {
+                    jsch.addIdentity(
+                            user,
+                            identityFileContent.getBytes(StandardCharsets.UTF_8),
+                            null,
+                            identityFilePass.getBytes(StandardCharsets.UTF_8));
+                } else {
+                    jsch.addIdentity(
+                            user, identityFileContent.getBytes(StandardCharsets.UTF_8), null, null);
+                }
             }
 
             if (port <= 0) {
@@ -154,8 +166,9 @@ public class SFTPConnectionPool {
             } else {
                 session = jsch.getSession(user, host, port);
             }
-
-            session.setPassword(password);
+            if (password != null && password.length() > 0) {
+                session.setPassword(password);
+            }
 
             java.util.Properties config = new java.util.Properties();
             config.put("StrictHostKeyChecking", "no");

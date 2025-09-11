@@ -36,4 +36,14 @@ public class SftpFileBaseOptions extends FileBaseOptions {
             Options.key("host").stringType().noDefaultValue().withDescription("SFTP server host");
     public static final Option<Integer> SFTP_PORT =
             Options.key("port").intType().noDefaultValue().withDescription("SFTP server port");
+    public static final Option<String> SFTP_IDENTITY_FILE_CONTENT_BASE64 =
+            Options.key("identity_file_content_base64")
+                    .stringType()
+                    .noDefaultValue()
+                    .withDescription("SFTP server identity file content base64");
+    public static final Option<String> SFTP_IDENTITY_FILE_PASS =
+            Options.key("identity_file_pass")
+                    .stringType()
+                    .noDefaultValue()
+                    .withDescription("SFTP server identity file passphrase");
 }
