@@ -53,7 +53,7 @@ public class SftpFileSinkFactory extends BaseMultipleTableFileSinkFactory {
                 .required(SftpFileSinkOptions.SFTP_PORT)
                 .required(SftpFileSinkOptions.SFTP_USER)
                 .optional(SftpFileSinkOptions.SFTP_PASSWORD)
-                .optional(SftpFileSinkOptions.SFTP_KEYFILE)
+                .optional(SftpFileSinkOptions.SFTP_KEYFILE_CONTENT_BASE64)
                 .optional(SftpFileSinkOptions.SFTP_KEYFILE_PASSPHRASE)
                 .optional(FileBaseSinkOptions.FILE_FORMAT_TYPE)
                 .optional(FileBaseSinkOptions.SCHEMA_SAVE_MODE)

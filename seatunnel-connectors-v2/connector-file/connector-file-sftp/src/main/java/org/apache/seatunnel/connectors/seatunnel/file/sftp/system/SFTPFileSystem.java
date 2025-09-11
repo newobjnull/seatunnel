@@ -60,7 +60,7 @@ public class SFTPFileSystem extends FileSystem {
     public static final String FS_SFTP_PASSWORD_PREFIX = "fs.sftp.password.";
     public static final String FS_SFTP_HOST = "fs.sftp.host";
     public static final String FS_SFTP_HOST_PORT = "fs.sftp.host.port";
-    public static final String FS_SFTP_KEYFILE_PREFIX = "fs.sftp.keyfile.";
+    public static final String FS_SFTP_KEYFILE_CONTENT_PREFIX = "fs.sftp.keyfile_content.";
     public static final String FS_SFTP_KEYFILE_PHRASE_PREFIX = "fs.sftp.keyfile_phrase.";
     public static final String FS_SFTP_CONNECTION_MAX = "fs.sftp.connection.max";
     public static final String E_SAME_DIRECTORY_ONLY = "only same directory renames are supported";
@@ -126,10 +126,11 @@ public class SFTPFileSystem extends FileSystem {
         int port = conf.getInt(FS_SFTP_HOST_PORT, DEFAULT_SFTP_PORT);
         String user = conf.get(FS_SFTP_USER_PREFIX + host, null);
         String pwd = conf.get(FS_SFTP_PASSWORD_PREFIX + host + "." + user, null);
-        String keyFile = conf.get(FS_SFTP_KEYFILE_PREFIX + host + "." + user, null);
+        String keyFileContent = conf.get(FS_SFTP_KEYFILE_CONTENT_PREFIX + host + "." + user, null);
         String keyFilePhrase = conf.get(FS_SFTP_KEYFILE_PHRASE_PREFIX + host + "." + user, null);
 
-        ChannelSftp channel = connectionPool.connect(host, port, user, pwd, keyFile, keyFilePhrase);
+        ChannelSftp channel =
+                connectionPool.connect(host, port, user, pwd, keyFileContent, keyFilePhrase);
 
         return channel;
     }

@@ -140,10 +140,11 @@ public class SftpFileIT extends TestSuiteBase implements TestResource {
     public void testSftpFileReadAndWrite(TestContainer container)
             throws IOException, InterruptedException {
         TestHelper helper = new TestHelper(container);
-        String homePath = "/home/seatunnel";
+        String excelByKeyfilePath = "/home/"+USERNAME+"/tmp/seatunnel/excel_by_keyfile";
         // test read and write sftp with keyfile authentication
+        deleteFileFromContainer(excelByKeyfilePath);
         helper.execute("/excel/sftp_excel_to_sftp_excel.conf");
-        Assertions.assertEquals(getFileListFromContainer(homePath +"/tmp/seatunnel/excel_by_keyfile").size(), 1);
+        Assertions.assertEquals(1, getFileListFromContainer(excelByKeyfilePath).size());
 
         // test write sftp excel file
         helper.execute("/excel/fakesource_to_sftp_excel.conf");
@@ -175,7 +176,7 @@ public class SftpFileIT extends TestSuiteBase implements TestResource {
         // test read sftp xml file
         helper.execute("/xml/sftp_file_xml_to_assert.conf");
         // test sftp source support multipleTable
-
+        String homePath = "/home/seatunnel";
         String sink01 = "/tmp/multipleSource/seatunnel/json/fake01";
         String sink02 = "/tmp/multipleSource/seatunnel/json/fake02";
         deleteFileFromContainer(homePath + sink01);

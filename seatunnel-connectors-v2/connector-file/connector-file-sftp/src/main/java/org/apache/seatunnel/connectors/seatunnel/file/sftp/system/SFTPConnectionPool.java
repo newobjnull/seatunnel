@@ -117,7 +117,12 @@ public class SFTPConnectionPool {
     }
 
     public ChannelSftp connect(
-            String host, int port, String user, String password, String keyFile, String keyFilePass)
+            String host,
+            int port,
+            String user,
+            String password,
+            String keyFileContent,
+            String keyFilePass)
             throws IOException {
         // get connection from pool
         ConnectionInfo info = new ConnectionInfo(host, port, user);
@@ -143,15 +148,16 @@ public class SFTPConnectionPool {
                 user = System.getProperty("user.name");
             }
 
-            if (keyFile != null && keyFile.length() > 0) {
+            if (keyFileContent != null && keyFileContent.length() > 0) {
                 if (keyFilePass != null && keyFilePass.length() > 0) {
                     jsch.addIdentity(
                             user,
-                            keyFile.getBytes(StandardCharsets.UTF_8),
+                            keyFileContent.getBytes(StandardCharsets.UTF_8),
                             null,
                             keyFilePass.getBytes(StandardCharsets.UTF_8));
                 } else {
-                    jsch.addIdentity(user, keyFile.getBytes(StandardCharsets.UTF_8), null, null);
+                    jsch.addIdentity(
+                            user, keyFileContent.getBytes(StandardCharsets.UTF_8), null, null);
                 }
             }
 

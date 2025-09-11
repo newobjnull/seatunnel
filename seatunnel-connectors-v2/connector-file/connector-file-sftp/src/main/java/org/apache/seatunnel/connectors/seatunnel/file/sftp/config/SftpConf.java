@@ -63,14 +63,15 @@ public class SftpConf extends HadoopConf {
                             + config.get(SftpFileBaseOptions.SFTP_USER),
                     passwordOptional.get());
         }
-        Optional<String> keyFileOptional = config.getOptional(SftpFileBaseOptions.SFTP_KEYFILE);
-        if (keyFileOptional.isPresent() && keyFileOptional.get().length() > 0) {
+        Optional<String> keyFileCotentOptional =
+                config.getOptional(SftpFileBaseOptions.SFTP_KEYFILE_CONTENT_BASE64);
+        if (keyFileCotentOptional.isPresent() && keyFileCotentOptional.get().length() > 0) {
             sftpOptions.put(
-                    SFTPFileSystem.FS_SFTP_KEYFILE_PREFIX
+                    SFTPFileSystem.FS_SFTP_KEYFILE_CONTENT_PREFIX
                             + host
                             + "."
                             + config.get(SftpFileBaseOptions.SFTP_USER),
-                    new String(Base64.getDecoder().decode(keyFileOptional.get())));
+                    new String(Base64.getDecoder().decode(keyFileCotentOptional.get())));
         }
         Optional<String> keyFilePassPhraseOptional =
                 config.getOptional(SftpFileBaseOptions.SFTP_KEYFILE_PASSPHRASE);
