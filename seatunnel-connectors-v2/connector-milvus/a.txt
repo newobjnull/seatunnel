@@ -1,0 +1,16 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< org.apache.seatunnel:connector-milvus >----------------
+[INFO] Building SeaTunnel : Connectors V2 : Milvus 2.3.12-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from apache.snapshots: https://repository.apache.org/snapshots/org/apache/seatunnel/connector-common/2.3.12-SNAPSHOT/maven-metadata.xml
+[INFO] 
+[INFO] --- dependency:3.1.1:tree (default-cli) @ connector-milvus ---
+[INFO] Skipping plugin execution
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.696 s
+[INFO] Finished at: 2025-09-01T16:41:15+08:00
+[INFO] ------------------------------------------------------------------------

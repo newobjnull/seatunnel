@@ -31,6 +31,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestTemplate;
+import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.shaded.com.github.dockerjava.core.command.ExecStartResultCallback;
@@ -75,6 +76,12 @@ public class SftpFileIT extends TestSuiteBase implements TestResource {
                         .withEnv("SFTP_USERS", USERNAME + ":" + PASSWORD)
                         .withCommand(USERNAME + ":" + PASSWORD + ":::tmp")
                         .withNetwork(NETWORK)
+                        .withFileSystemBind( "src/test/resources/keyfile/id_rsa_key_with_passphrase.pub",
+                                "/home/"+USERNAME+"/.ssh/keys/id_rsa_key_with_passphrase.pub",
+                                    BindMode.READ_ONLY )
+                        .withFileSystemBind( "src/test/resources/keyfile/id_rsa_key_without_passphrase.pub",
+                                "/home/"+USERNAME+"/.ssh/keys/id_rsa_key_without_passphrase.pub",
+                                BindMode.READ_ONLY )
                         .withNetworkAliases(SFTP_CONTAINER_HOST)
                         .withExposedPorts(SFTP_PORT);
 
@@ -124,6 +131,8 @@ public class SftpFileIT extends TestSuiteBase implements TestResource {
                 "/text/e2e.txt",
                 "/home/seatunnel/tmp/seatunnel/read/wildcard/e2e.txt",
                 sftpContainer);
+
+
         sftpContainer.execInContainer("sh", "-c", "chown -R seatunnel /home/seatunnel/tmp/");
     }
 
@@ -131,6 +140,11 @@ public class SftpFileIT extends TestSuiteBase implements TestResource {
     public void testSftpFileReadAndWrite(TestContainer container)
             throws IOException, InterruptedException {
         TestHelper helper = new TestHelper(container);
+        String homePath = "/home/seatunnel";
+        // test read and write sftp with keyfile authentication
+        helper.execute("/excel/sftp_excel_to_sftp_excel.conf");
+        Assertions.assertEquals(getFileListFromContainer(homePath +"/tmp/seatunnel/excel_by_keyfile").size(), 1);
+
         // test write sftp excel file
         helper.execute("/excel/fakesource_to_sftp_excel.conf");
         // test read sftp excel file
@@ -161,7 +175,7 @@ public class SftpFileIT extends TestSuiteBase implements TestResource {
         // test read sftp xml file
         helper.execute("/xml/sftp_file_xml_to_assert.conf");
         // test sftp source support multipleTable
-        String homePath = "/home/seatunnel";
+
         String sink01 = "/tmp/multipleSource/seatunnel/json/fake01";
         String sink02 = "/tmp/multipleSource/seatunnel/json/fake02";
         deleteFileFromContainer(homePath + sink01);

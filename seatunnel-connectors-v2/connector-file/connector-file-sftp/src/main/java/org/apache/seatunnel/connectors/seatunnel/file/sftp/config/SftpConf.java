@@ -19,8 +19,11 @@ package org.apache.seatunnel.connectors.seatunnel.file.sftp.config;
 
 import org.apache.seatunnel.api.configuration.ReadonlyConfig;
 import org.apache.seatunnel.connectors.seatunnel.file.config.HadoopConf;
+import org.apache.seatunnel.connectors.seatunnel.file.sftp.system.SFTPFileSystem;
 
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class SftpConf extends HadoopConf {
     private static final String HDFS_IMPL =
@@ -47,10 +50,39 @@ public class SftpConf extends HadoopConf {
         String defaultFS = String.format("sftp://%s:%s", host, port);
         HadoopConf hadoopConf = new SftpConf(defaultFS);
         HashMap<String, String> sftpOptions = new HashMap<>();
-        sftpOptions.put("fs.sftp.user." + host, config.get(SftpFileBaseOptions.SFTP_USER));
         sftpOptions.put(
-                "fs.sftp.password." + host + "." + config.get(SftpFileBaseOptions.SFTP_USER),
-                config.get(SftpFileBaseOptions.SFTP_PASSWORD));
+                SFTPFileSystem.FS_SFTP_USER_PREFIX + host,
+                config.get(SftpFileBaseOptions.SFTP_USER));
+
+        Optional<String> passwordOptional = config.getOptional(SftpFileBaseOptions.SFTP_PASSWORD);
+        if (passwordOptional.isPresent() && passwordOptional.get().length() > 0) {
+            sftpOptions.put(
+                    SFTPFileSystem.FS_SFTP_PASSWORD_PREFIX
+                            + host
+                            + "."
+                            + config.get(SftpFileBaseOptions.SFTP_USER),
+                    passwordOptional.get());
+        }
+        Optional<String> keyFileOptional = config.getOptional(SftpFileBaseOptions.SFTP_KEYFILE);
+        if (keyFileOptional.isPresent() && keyFileOptional.get().length() > 0) {
+            sftpOptions.put(
+                    SFTPFileSystem.FS_SFTP_KEYFILE_PREFIX
+                            + host
+                            + "."
+                            + config.get(SftpFileBaseOptions.SFTP_USER),
+                    new String(Base64.getDecoder().decode(keyFileOptional.get())));
+        }
+        Optional<String> keyFilePassPhraseOptional =
+                config.getOptional(SftpFileBaseOptions.SFTP_KEYFILE_PASSPHRASE);
+        if (keyFilePassPhraseOptional.isPresent() && keyFilePassPhraseOptional.get().length() > 0) {
+            sftpOptions.put(
+                    SFTPFileSystem.FS_SFTP_KEYFILE_PHRASE_PREFIX
+                            + host
+                            + "."
+                            + config.get(SftpFileBaseOptions.SFTP_USER),
+                    keyFilePassPhraseOptional.get());
+        }
+
         hadoopConf.setExtraOptions(sftpOptions);
         return hadoopConf;
     }
